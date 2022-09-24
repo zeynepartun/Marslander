@@ -5,24 +5,24 @@
 using namespace std;
 using namespace std::chrono;
 
-int main() {
+int result(){
+  cout << "Hello" << endl;
+  return 5;
+}
 
-  // declare variables
-  high_resolution_clock::time_point endtime, starttime = high_resolution_clock::now();
-  microseconds duration;
-  
-  double m, k, x, v, t_max, dt, t, a;
+void euler_calc(double m, double k, double x, double v, double t_max, double dt){
+  double t, a;
   vector<double> t_list, x_list, v_list;
 
   // mass, spring constant, initial position and velocity
-  m = 1;
-  k = 1;
-  x = 0;
-  v = 1;
+  // m = 1;
+  // k = 1;
+  // x = 0;
+  // v = 1;
 
   // simulation time and timestep
-  t_max = 100;
-  dt = 0.001;
+  // t_max = 100;
+  // dt = 0.001;
 
   // Euler integration
   for (t = 0; t <= t_max; t = t + dt) {
@@ -39,6 +39,9 @@ int main() {
 
   }
 
+  //Verlet integration
+
+
   // Write the trajectories to file
   ofstream fout;
   fout.open("trajectories.txt");
@@ -49,12 +52,68 @@ int main() {
   } else { // file did not open successfully
     cout << "Could not open trajectory file for writing" << endl;
   }
+}
+
+int main() {
+
+  // declare variables
+  high_resolution_clock::time_point endtime, starttime = high_resolution_clock::now();
+  microseconds duration;
+  int testfunc;
+
+  euler_calc(1, 1, 0, 1, 100, 0.001);
+  
+  // double m, k, x, v, t_max, dt, t, a;
+  // vector<double> t_list, x_list, v_list;
+
+  // // mass, spring constant, initial position and velocity
+  // m = 1;
+  // k = 1;
+  // x = 0;
+  // v = 1;
+
+  // // simulation time and timestep
+  // t_max = 100;
+  // dt = 0.001;
+
+  // // Euler integration
+  // for (t = 0; t <= t_max; t = t + dt) {
+
+  //   // append current state to trajectories
+  //   t_list.push_back(t);
+  //   x_list.push_back(x);
+  //   v_list.push_back(v);
+
+  //   // calculate new position and velocity
+  //   a = -k * x / m;
+  //   x = x + dt * v;
+  //   v = v + dt * a;
+
+  // }
+
+  // //Verlet integration
+
+
+  // // Write the trajectories to file
+  // ofstream fout;
+  // fout.open("trajectories.txt");
+  // if (fout) { // file opened successfully
+  //   for (int i = 0; i < t_list.size(); i = i + 1) {
+  //     fout << t_list[i] << ' ' << x_list[i] << ' ' << v_list[i] << endl;
+  //   }
+  // } else { // file did not open successfully
+  //   cout << "Could not open trajectory file for writing" << endl;
+  // }
 
   endtime = high_resolution_clock::now();
   duration = duration_cast<microseconds>(endtime - starttime);
 
   cout << "Time taken by function: "
     << duration.count() << " microseconds" << endl;
+
+
+  testfunc = result();
+  cout << testfunc << endl;
  
   return 0;
   
