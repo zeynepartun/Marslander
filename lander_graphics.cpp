@@ -737,6 +737,8 @@ void draw_instrument_window (void)
   glut_print(view_width+GAP+240, INSTRUMENT_HEIGHT-137, s.str());
   s.str(""); s << "velocity " << fixed << velocity_from_positions.z << " m/s";
   glut_print(view_width+GAP+380, INSTRUMENT_HEIGHT-137, s.str());
+  s.str(""); s << "parachute drag " << fixed << parachute_drag << " N";
+  glut_print(view_width+GAP+240, INSTRUMENT_HEIGHT-157, s.str());
 
   // Draw thrust bar
   s.str(""); s << "Thrust " << fixed << thrust_wrt_world().abs() << " N";
@@ -1677,7 +1679,8 @@ void update_lander_state (void)
   last_position = position;
 
   // Mechanical dynamics
-  numerical_dynamics();
+  numerical_dynamics(last_position);
+
 
   // Refresh the visualization
   update_visualization();

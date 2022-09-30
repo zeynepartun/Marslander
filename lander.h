@@ -12,6 +12,8 @@
 // to receive any suggested modifications by private correspondence to
 // ahg@eng.cam.ac.uk and gc121@eng.cam.ac.uk.
 
+
+
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #include <windows.h>
@@ -171,6 +173,7 @@ double climb_speed, ground_speed, altitude, throttle, fuel;
 bool stabilized_attitude, autopilot_enabled, parachute_lost;
 parachute_status_t parachute_status;
 int stabilized_attitude_angle;
+double parachute_drag;
 
 // Orbital and closeup view parameters
 double orbital_zoom, save_orbital_zoom, closeup_offset, closeup_xr, closeup_yr, terrain_angle;
@@ -192,6 +195,8 @@ extern string scenario_description[];
 extern vector3d position, orientation, velocity;
 extern parachute_status_t parachute_status;
 extern int stabilized_attitude_angle;
+extern double parachute_drag;
+
 
 #endif
 
@@ -234,7 +239,7 @@ void update_visualization (void);
 void attitude_stabilization (void);
 vector3d thrust_wrt_world (void);
 void autopilot (void);
-void numerical_dynamics (void);
+void numerical_dynamics (vector3d last_position);
 void initialize_simulation (void);
 void update_lander_state (void);
 void reset_simulation (void);
@@ -246,3 +251,7 @@ void closeup_mouse_button (int button, int state, int x, int y);
 void closeup_mouse_motion (int x, int y);
 void glut_special (int key, int x, int y);
 void glut_key (unsigned char k, int x, int y);
+vector3d euler_pos(vector3d position, vector3d force, double mass, double delta_t );
+vector3d verlet_pos(vector3d position, vector3d force, double mass, vector3d velocity, double delta_t, vector3d alast_position);
+
+

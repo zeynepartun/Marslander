@@ -20,12 +20,87 @@ void autopilot (void)
   // INSERT YOUR CODE HERE
 }
 
-void numerical_dynamics (void)
+vector3d force_gravity( double mass1, double mass2, double gconstant )
+{
+  return -mass2*mass1*gconstant/position.abs2()*position.norm();
+}
+
+vector3d force_drag(double density,  double drag_coefficient, double area )
+{
+  vector3d temp;
+  temp = -0.5 * density * drag_coefficient * area * velocity.abs2() * velocity.norm();
+  return temp;
+}
+
+vector3d force_thrust()
+{
+  vector3d ft = thrust_wrt_world();
+  return ft;
+}
+
+double lander_area(){
+  return 3.1415927*LANDER_SIZE*LANDER_SIZE;
+}
+double chute_area(){
+  return 5*4*LANDER_SIZE*LANDER_SIZE;
+}
+
+
+double lander_mass()
+{
+  return UNLOADED_LANDER_MASS+ fuel*FUEL_CAPACITY*FUEL_DENSITY;
+}
+vector3d force_on_lander()
+{
+  vector3d drag_chute = vector3d(0,0,0);
+  vector3d drag_lander;
+  vector3d total_force;
+  
+
+  if (parachute_status == DEPLOYED){
+    drag_chute = force_drag(atmospheric_density(position),DRAG_COEF_CHUTE, chute_area());
+  } 
+  drag_lander = force_drag(atmospheric_density(position),DRAG_COEF_LANDER, lander_area());
+  parachute_drag = drag_chute.abs();
+
+  
+  total_force = force_gravity(MARS_MASS,lander_mass(), GRAVITY) 
+    + drag_chute + drag_lander +force_thrust();
+
+  return total_force;
+}
+
+
+vector3d euler_pos(vector3d force, double mass)
+{
+  vector3d acceleration, new_position;
+
+  acceleration = force / mass;
+  velocity = velocity + delta_t * acceleration;
+  new_position = position + delta_t * velocity;
+
+  return new_position;
+}
+
+// vector3d verlet_pos(vector3d position, vector3d force,
+//                     double mass, vector3d velocity, double delta_t, vector3d last_position, vector3d acceleration)
+// {
+//   vector3d posmin1;
+//   posmin1 = position - delta_t * velocity;
+//   acceleration = force / mass;
+//   position = 2 * position - posmin1 + delta_t * delta_t * acceleration;
+//   return position;
+// }
+
+void numerical_dynamics (vector3d last_position)
   // This is the function that performs the numerical integration to update the
   // lander's pose. The time step is delta_t (global variable).
 {
-  // INSERT YOUR CODE HERE
-
+  position = euler_pos( force_on_lander(), lander_mass()); 
+  cout << position << endl ;
+  cout << force_on_lander() << endl;
+  cout << lander_mass() << endl;
+  cout << velocity << endl;
   // Here we can apply an autopilot to adjust the thrust, parachute and attitude
   if (autopilot_enabled) autopilot();
 
